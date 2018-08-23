@@ -1,0 +1,63 @@
+version: '2'
+services:
+  apollo:
+    image: idoop/docker-apollo:latest
+    container_name: apollo
+    network_mode: "host"
+    restart: always
+# 启动前,确认对应环境的数据库已经建立，否则apollo无法启动.
+# 默认端口:portal:8070; dev:8080,8090; fat:8081,8091; uat:8082,8092; pro:8083,8093
+    volumes:
+      - ./logs:/opt
+    environment:
+      PORTAL_DB: jdbc:mysql://192.168.86.17:3306/ApolloPortalDB?characterEncoding=utf8
+      PORTAL_DB_USER: prodba
+      PORTAL_DB_PWD: 1qaz2wsx
+      PORTAL_PORT: 88
+
+      DEV_DB: jdbc:mysql://192.168.86.17:3306/ApolloConfigDBDev?characterEncoding=utf8
+      DEV_DB_USER: prodba
+      DEV_DB_PWD: 1qaz2wsx
+      DEV_CONFIG_PORT: 8080
+      DEV_ADMIN_PORT: 8090
+      
+      
+      FAT_DB: jdbc:mysql://192.168.86.17:3306/ApolloConfigDBFat?characterEncoding=utf8
+      FAT_DB_USER: prodba
+      FAT_DB_PWD: 1qaz2wsx
+      FAT_CONFIG_PORT: 8081
+      FAT_ADMIN_PORT: 8091
+
+      UAT_DB: jdbc:mysql://192.168.86.17:3306/ApolloConfigDBUat?characterEncoding=utf8
+      UAT_DB_USER: prodba
+      UAT_DB_PWD: 1qaz2wsx
+      UAT_CONFIG_PORT: 8082
+      UAT_ADMIN_PORT: 8092
+      
+
+      PRO_DB: jdbc:mysql://192.168.86.17:3306/ApolloConfigDBPro?characterEncoding=utf8
+      PRO_DB_USER: prodba
+      PRO_DB_PWD: 1qaz2wsx
+      PRO_CONFIG_PORT: 8083
+      PRO_ADMIN_PORT: 8093
+
+  apollo-db:
+    image: mysql:5.7
+    container_name: apollo-db
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    depends_on:
+      - apollo-dbdata
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+    volumes_from:
+      - apollo-dbdata
+
+  apollo-dbdata:
+    image: alpine:latest
+    container_name: apollo-dbdata
+    volumes:
+      - /var/lib/mysql
