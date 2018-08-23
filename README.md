@@ -129,3 +129,8 @@ Sql:
 
 > - 添加环境，修改数据库
     ApolloPortalDB 数据库  ServerConfig 表 第一行  value 值改成：fat,dev,uat,pro
+
+
+## 接口地址：
+    
+    http://192.168.86.17:8080/configfiles/json/SampleApp/default/application?ip=192.168.1.248"
